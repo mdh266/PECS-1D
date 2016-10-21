@@ -3,612 +3,612 @@
 
 ddpTimeStepping_type::
 ddpTimeStepping_type(ddpCarrier_type & electrons,
-										 ddpCarrier_type & holes,
-										 ddpCarrier_type & reductants,
-										 ddpCarrier_type & oxidants,
-								 		 ddpPoisson_type & Poisson,
-										 const ddpDopingProfile_type & DopingProfile,
-										 const ddpProblemInfo_type & problem,
-										 const double & tCurrent)
-	: SRH_Recombination(electrons, holes)
+                     ddpCarrier_type & holes,
+                     ddpCarrier_type & reductants,
+                     ddpCarrier_type & oxidants,
+                     ddpPoisson_type & Poisson,
+                     const ddpDopingProfile_type & DopingProfile,
+                     const ddpProblemInfo_type & problem,
+                     const double & tCurrent)
+    : SRH_Recombination(electrons, holes)
 {
-	// set the equilibrium values
-	electrons_e = electrons.carrierProps.EquilibriumDensity;
-	holes_e	=	holes.carrierProps.EquilibriumDensity;
+    // set the equilibrium values
+    electrons_e = electrons.carrierProps.EquilibriumDensity;
+    holes_e	=	holes.carrierProps.EquilibriumDensity;
 
-	// set the transfer rates
-	k_et = electrons.getTransferRate();
-	k_ht = holes.getTransferRate();
+    // set the transfer rates
+    k_et = electrons.getTransferRate();
+    k_ht = holes.getTransferRate();
 
-	int MXSubdomainDOF = Poisson.EFTotalToSemiconductor.rows();
+    int MXSubdomainDOF = Poisson.EFTotalToSemiconductor.rows();
 
-	// set the sizes of the electric field dofs
-	SemiconductorElecFieldDof = ddpDenseVector_type::Zero(MXSubdomainDOF);
-  ElectrolyteElecFieldDof = ddpDenseVector_type::Zero(MXSubdomainDOF);
+    // set the sizes of the electric field dofs
+    SemiconductorElecFieldDof = ddpDenseVector_type::Zero(MXSubdomainDOF);
+    ElectrolyteElecFieldDof = ddpDenseVector_type::Zero(MXSubdomainDOF);
 }
 
 ddpTimeStepping_type::
 ~ddpTimeStepping_type()
 {
-	// Default
+    // Default
 }
 
 
 int
 ddpTimeStepping_type::
 AssembleLDGMatrices(ddpCarrier_type & electrons,
-									 ddpCarrier_type & holes,
-									 ddpCarrier_type & reductants,
-									 ddpCarrier_type & oxidants,
-									 const ddpProblemInfo_type & problem,
-									 const ddpGrid_type & semiconductor_grid,
-									 const ddpGrid_type & electrolyte_grid,
-	 								 const double & tDelta)
+                    ddpCarrier_type & holes,
+                    ddpCarrier_type & reductants,
+                    ddpCarrier_type & oxidants,
+                    const ddpProblemInfo_type & problem,
+                    const ddpGrid_type & semiconductor_grid,
+                    const ddpGrid_type & electrolyte_grid,
+                    const double & tDelta)
 {
-	electrons.AssembleLDGSystem(problem, semiconductor_grid, tDelta);
-	holes.AssembleLDGSystem(problem, semiconductor_grid, tDelta);
-	reductants.AssembleLDGSystem(problem, electrolyte_grid, tDelta);
-	oxidants.AssembleLDGSystem(problem, electrolyte_grid, tDelta);
-	return 0;
+    electrons.AssembleLDGSystem(problem, semiconductor_grid, tDelta);
+    holes.AssembleLDGSystem(problem, semiconductor_grid, tDelta);
+    reductants.AssembleLDGSystem(problem, electrolyte_grid, tDelta);
+    oxidants.AssembleLDGSystem(problem, electrolyte_grid, tDelta);
+    return 0;
 }
 
 int
 ddpTimeStepping_type::
 AssembleLDGMatrices(ddpCarrier_type & electrons,
-									 ddpCarrier_type & holes,
-									 ddpCarrier_type & reductants,
-									 ddpCarrier_type & oxidants,
-									 const ddpProblemInfo_type & problem,
-									 const ddpGrid_type & semiconductor_grid,
-									 const ddpGrid_type & electrolyte_grid,
-	 								 const double & tDelta_semi,
-									 const double & tDelta_elec)
+                    ddpCarrier_type & holes,
+                    ddpCarrier_type & reductants,
+                    ddpCarrier_type & oxidants,
+                    const ddpProblemInfo_type & problem,
+                    const ddpGrid_type & semiconductor_grid,
+                    const ddpGrid_type & electrolyte_grid,
+                    const double & tDelta_semi,
+                    const double & tDelta_elec)
 {
-	electrons.AssembleLDGSystem(problem, semiconductor_grid, tDelta_semi);
-	holes.AssembleLDGSystem(problem, semiconductor_grid, tDelta_semi);
+    electrons.AssembleLDGSystem(problem, semiconductor_grid, tDelta_semi);
+    holes.AssembleLDGSystem(problem, semiconductor_grid, tDelta_semi);
 
-	reductants.AssembleLDGSystem(problem, electrolyte_grid, tDelta_elec);
-	oxidants.AssembleLDGSystem(problem, electrolyte_grid, tDelta_elec);
-	return 0;
+    reductants.AssembleLDGSystem(problem, electrolyte_grid, tDelta_elec);
+    oxidants.AssembleLDGSystem(problem, electrolyte_grid, tDelta_elec);
+    return 0;
 }
 
 int
 ddpTimeStepping_type::
 AssembleBackwardEulerRHS(ddpCarrier_type & electrons,
-						 ddpCarrier_type & holes,
-						 ddpCarrier_type & reductants,
-						 ddpCarrier_type & oxidants,
-						 const ddpGrid_type & semiconductor_grid,
-						 const double & tCurrent,
-						 const double & tDelta)
+                         ddpCarrier_type & holes,
+                         ddpCarrier_type & reductants,
+                         ddpCarrier_type & oxidants,
+                         const ddpGrid_type & semiconductor_grid,
+                         const double & tCurrent,
+                         const double & tDelta)
 {
-			////////////////////////////////////////////////////////////////////
-			// Compute the interface conditions
-			///////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+    // Compute the interface conditions
+    ///////////////////////////////////////////////////////////////////
 
-			// get interface density values
-			electrons_interface = electrons.getInterfaceDensity();
-			holes_interface = holes.getInterfaceDensity();
-			reductants_interface = reductants.getInterfaceDensity();
-			oxidants_interface = oxidants.getInterfaceDensity();
-			
-			
-			// get the forward and backward transfer rates at this time step
-			k_f = k_et *	(electrons_interface - electrons_e);	
-			k_b = k_ht *  (holes_interface - holes_e);
+    // get interface density values
+    electrons_interface = electrons.getInterfaceDensity();
+    holes_interface = holes.getInterfaceDensity();
+    reductants_interface = reductants.getInterfaceDensity();
+    oxidants_interface = oxidants.getInterfaceDensity();
 
-		// set the Robin boundary conditions at this time step
-			electrons.setRight_RobinValue(k_f * oxidants_interface );
-			holes.setRight_RobinValue( k_b * reductants_interface );
 
-			reductants.setLeft_RobinValue( 
-							 (k_f * oxidants_interface - k_b * reductants_interface ));
+    // get the forward and backward transfer rates at this time step
+    k_f = k_et *	(electrons_interface - electrons_e);
+    k_b = k_ht *  (holes_interface - holes_e);
 
-			oxidants.setLeft_RobinValue( 
-							 (k_b * reductants_interface - k_f *oxidants_interface) );
+    // set the Robin boundary conditions at this time step
+    electrons.setRight_RobinValue(k_f * oxidants_interface );
+    holes.setRight_RobinValue( k_b * reductants_interface );
 
-			////////////////////////////////////////////////////////////////////
-			// Update Recombination
-			///////////////////////////////////////////////////////////////////
-			grvy_timer_begin("Assemble Recombination Term");	
-			SRH_Recombination.updateRecombination(semiconductor_grid, electrons, holes);
-			grvy_timer_end("Assemble Recombination Term");
-	
-			////////////////////////////////////////////////////////////////////
-			// Assemble RHSes
-			///////////////////////////////////////////////////////////////////
+    reductants.setLeft_RobinValue(
+        (k_f * oxidants_interface - k_b * reductants_interface ));
 
-			// Time stepping for Semiconductor	 
-			electrons.AssembleRHS(tCurrent,
-														tDelta);
-			
-			holes.AssembleRHS(tCurrent,
-												tDelta);
-														
-			reductants.AssembleRHS(tCurrent,
-												tDelta);
-			
-			oxidants.AssembleRHS(tCurrent,
-												tDelta);
+    oxidants.setLeft_RobinValue(
+        (k_b * reductants_interface - k_f *oxidants_interface) );
 
-			return 0;
+    ////////////////////////////////////////////////////////////////////
+    // Update Recombination
+    ///////////////////////////////////////////////////////////////////
+//    grvy_timer_begin("Assemble Recombination Term");
+    SRH_Recombination.updateRecombination(semiconductor_grid, electrons, holes);
+//    grvy_timer_end("Assemble Recombination Term");
+
+    ////////////////////////////////////////////////////////////////////
+    // Assemble RHSes
+    ///////////////////////////////////////////////////////////////////
+
+    // Time stepping for Semiconductor
+    electrons.AssembleRHS(tCurrent,
+                          tDelta);
+
+    holes.AssembleRHS(tCurrent,
+                      tDelta);
+
+    reductants.AssembleRHS(tCurrent,
+                           tDelta);
+
+    oxidants.AssembleRHS(tCurrent,
+                         tDelta);
+
+    return 0;
 }
 
 int
 ddpTimeStepping_type::
 AssembleBackwardEulerSemiconductorRHS(ddpCarrier_type & electrons,
-						 ddpCarrier_type & holes,
-						 ddpCarrier_type & reductants,
-						 ddpCarrier_type & oxidants,
-						 const ddpGrid_type & semiconductor_grid,
-						 const double & tCurrent,
-						 const double & tDelta)
+                                      ddpCarrier_type & holes,
+                                      ddpCarrier_type & reductants,
+                                      ddpCarrier_type & oxidants,
+                                      const ddpGrid_type & semiconductor_grid,
+                                      const double & tCurrent,
+                                      const double & tDelta)
 {
-			////////////////////////////////////////////////////////////////////
-			// Compute the interface conditions
-			///////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+    // Compute the interface conditions
+    ///////////////////////////////////////////////////////////////////
 
-			// get interface density values
-			electrons_interface = electrons.getInterfaceDensity();
-			holes_interface = holes.getInterfaceDensity();
-			reductants_interface = reductants.getInterfaceDensity();
-			oxidants_interface = oxidants.getInterfaceDensity();
-			
-			
-			// get the forward and backward transfer rates at this time step
-			k_f = k_et *	(electrons_interface - electrons_e);	
-			k_b = k_ht *  (holes_interface - holes_e);
+    // get interface density values
+    electrons_interface = electrons.getInterfaceDensity();
+    holes_interface = holes.getInterfaceDensity();
+    reductants_interface = reductants.getInterfaceDensity();
+    oxidants_interface = oxidants.getInterfaceDensity();
 
-		// set the Robin boundary conditions at this time step
-			electrons.setRight_RobinValue(k_f * oxidants_interface );
-			holes.setRight_RobinValue( k_b * reductants_interface );
-			////////////////////////////////////////////////////////////////////
-			// Update Recombination
-			///////////////////////////////////////////////////////////////////
-		grvy_timer_begin("Assemble Recombination Term");	
-			SRH_Recombination.updateRecombination(semiconductor_grid, electrons, holes);
-			grvy_timer_end("Assemble Recombination Term");
-	
-			////////////////////////////////////////////////////////////////////
-			// Assemble RHSes
-			///////////////////////////////////////////////////////////////////
 
-			// Time stepping for Semiconductor	 
-			electrons.AssembleRHS(tCurrent,
-														tDelta);
-			
-			holes.AssembleRHS(tCurrent,
-												tDelta);
+    // get the forward and backward transfer rates at this time step
+    k_f = k_et *	(electrons_interface - electrons_e);
+    k_b = k_ht *  (holes_interface - holes_e);
 
-			return 0;
+    // set the Robin boundary conditions at this time step
+    electrons.setRight_RobinValue(k_f * oxidants_interface );
+    holes.setRight_RobinValue( k_b * reductants_interface );
+    ////////////////////////////////////////////////////////////////////
+    // Update Recombination
+    ///////////////////////////////////////////////////////////////////
+//    grvy_timer_begin("Assemble Recombination Term");
+    SRH_Recombination.updateRecombination(semiconductor_grid, electrons, holes);
+//    grvy_timer_end("Assemble Recombination Term");
+
+    ////////////////////////////////////////////////////////////////////
+    // Assemble RHSes
+    ///////////////////////////////////////////////////////////////////
+
+    // Time stepping for Semiconductor
+    electrons.AssembleRHS(tCurrent,
+                          tDelta);
+
+    holes.AssembleRHS(tCurrent,
+                      tDelta);
+
+    return 0;
 }
 
 int
 ddpTimeStepping_type::
 AssembleBackwardEulerElectrolyteRHS(ddpCarrier_type & electrons,
-						 ddpCarrier_type & holes,
-						 ddpCarrier_type & reductants,
-						 ddpCarrier_type & oxidants,
-						 const double & tCurrent,
-						 const double & tDelta)
+                                    ddpCarrier_type & holes,
+                                    ddpCarrier_type & reductants,
+                                    ddpCarrier_type & oxidants,
+                                    const double & tCurrent,
+                                    const double & tDelta)
 {
-		// get the forward and backward transfer rates at this time step
-			k_f = k_et *	(electrons_interface - electrons_e);	
-			k_b = k_ht *  (holes_interface - holes_e);
+    // get the forward and backward transfer rates at this time step
+    k_f = k_et *	(electrons_interface - electrons_e);
+    k_b = k_ht *  (holes_interface - holes_e);
 
-			reductants.setLeft_RobinValue( 
-							 (k_f * oxidants_interface - k_b * reductants_interface ));
+    reductants.setLeft_RobinValue(
+        (k_f * oxidants_interface - k_b * reductants_interface ));
 
-			oxidants.setLeft_RobinValue( 
-							 (k_b * reductants_interface - k_f *oxidants_interface) );
+    oxidants.setLeft_RobinValue(
+        (k_b * reductants_interface - k_f *oxidants_interface) );
 
 
-			////////////////////////////////////////////////////////////////////
-			// Assemble RHSes for just redox couples
-			///////////////////////////////////////////////////////////////////
-													
-			reductants.AssembleRHS(tCurrent,
-												tDelta);
-			
-			oxidants.AssembleRHS(tCurrent,
-												tDelta);
+    ////////////////////////////////////////////////////////////////////
+    // Assemble RHSes for just redox couples
+    ///////////////////////////////////////////////////////////////////
 
-			return 0;
+    reductants.AssembleRHS(tCurrent,
+                           tDelta);
+
+    oxidants.AssembleRHS(tCurrent,
+                         tDelta);
+
+    return 0;
 }
 
 int
 ddpTimeStepping_type::
 UpdateImplicitDriftTerms(ddpCarrier_type & electrons,
-									ddpCarrier_type & holes,
-									ddpCarrier_type & reductants,
-									ddpCarrier_type & oxidants,
-									ddpPoisson_type & Poisson,
-									const ddpProblemInfo_type & problem,
-									const ddpGrid_type & grid)
-{	// Get the electric field values for the carriers
-	Poisson.getSemiconductorElecFieldDOFS(SemiconductorElecFieldDof);
-	Poisson.getElectrolyteElecFieldDOFS(ElectrolyteElecFieldDof); 
+                         ddpCarrier_type & holes,
+                         ddpCarrier_type & reductants,
+                         ddpCarrier_type & oxidants,
+                         ddpPoisson_type & Poisson,
+                         const ddpProblemInfo_type & problem,
+                         const ddpGrid_type & grid)
+{   // Get the electric field values for the carriers
+    Poisson.getSemiconductorElecFieldDOFS(SemiconductorElecFieldDof);
+    Poisson.getElectrolyteElecFieldDOFS(ElectrolyteElecFieldDof);
 
-	electrons.UpdateImplicitDriftTerm(SemiconductorElecFieldDof, problem, grid);
-	holes.UpdateImplicitDriftTerm(SemiconductorElecFieldDof, problem, grid);
-	reductants.UpdateImplicitDriftTerm(ElectrolyteElecFieldDof, problem, grid);
-	oxidants.UpdateImplicitDriftTerm(ElectrolyteElecFieldDof, problem, grid);
+    electrons.UpdateImplicitDriftTerm(SemiconductorElecFieldDof, problem, grid);
+    holes.UpdateImplicitDriftTerm(SemiconductorElecFieldDof, problem, grid);
+    reductants.UpdateImplicitDriftTerm(ElectrolyteElecFieldDof, problem, grid);
+    oxidants.UpdateImplicitDriftTerm(ElectrolyteElecFieldDof, problem, grid);
 
-	return 0;
+    return 0;
 }
 
 int
 ddpTimeStepping_type::
 UpdateExplicitDriftTerms(ddpCarrier_type & electrons,
-									ddpCarrier_type & holes,
-									ddpCarrier_type & reductants,
-									ddpCarrier_type & oxidants,
-									ddpPoisson_type & Poisson)
-										
-{	// Get the electric field values for the carriers
-	Poisson.getSemiconductorElecFieldDOFS(SemiconductorElecFieldDof);
-	Poisson.getElectrolyteElecFieldDOFS(ElectrolyteElecFieldDof); 
+                         ddpCarrier_type & holes,
+                         ddpCarrier_type & reductants,
+                         ddpCarrier_type & oxidants,
+                         ddpPoisson_type & Poisson)
 
-	electrons.UpdateExplicitDriftTerm(SemiconductorElecFieldDof);
-	holes.UpdateExplicitDriftTerm(SemiconductorElecFieldDof);
-	reductants.UpdateExplicitDriftTerm(ElectrolyteElecFieldDof);
-	oxidants.UpdateExplicitDriftTerm(ElectrolyteElecFieldDof);
+{   // Get the electric field values for the carriers
+    Poisson.getSemiconductorElecFieldDOFS(SemiconductorElecFieldDof);
+    Poisson.getElectrolyteElecFieldDOFS(ElectrolyteElecFieldDof);
 
-	return 0;
+    electrons.UpdateExplicitDriftTerm(SemiconductorElecFieldDof);
+    holes.UpdateExplicitDriftTerm(SemiconductorElecFieldDof);
+    reductants.UpdateExplicitDriftTerm(ElectrolyteElecFieldDof);
+    oxidants.UpdateExplicitDriftTerm(ElectrolyteElecFieldDof);
+
+    return 0;
 }
 
 
 int
 ddpTimeStepping_type::
 UpdateExplicitSemiconductorDriftTerms(ddpCarrier_type & electrons,
-									ddpCarrier_type & holes,
-									ddpPoisson_type & Poisson)
-										
-{	
-	// Get the electric field values for the carriers
-	Poisson.getSemiconductorElecFieldDOFS(SemiconductorElecFieldDof);
-	electrons.UpdateExplicitDriftTerm(SemiconductorElecFieldDof);
-	holes.UpdateExplicitDriftTerm(SemiconductorElecFieldDof);
-	return 0;
+                                      ddpCarrier_type & holes,
+                                      ddpPoisson_type & Poisson)
+
+{
+    // Get the electric field values for the carriers
+    Poisson.getSemiconductorElecFieldDOFS(SemiconductorElecFieldDof);
+    electrons.UpdateExplicitDriftTerm(SemiconductorElecFieldDof);
+    holes.UpdateExplicitDriftTerm(SemiconductorElecFieldDof);
+    return 0;
 }
 
 
 int
 ddpTimeStepping_type::
 UpdateExplicitElectrolyteDriftTerms(	ddpCarrier_type & reductants,
-									ddpCarrier_type & oxidants,
-									ddpPoisson_type & Poisson)
-										
-{	// Get the electric field values for the carriers
-	Poisson.getElectrolyteElecFieldDOFS(ElectrolyteElecFieldDof); 
+                                        ddpCarrier_type & oxidants,
+                                        ddpPoisson_type & Poisson)
 
-	reductants.UpdateExplicitDriftTerm(ElectrolyteElecFieldDof);
-	oxidants.UpdateExplicitDriftTerm(ElectrolyteElecFieldDof);
+{   // Get the electric field values for the carriers
+    Poisson.getElectrolyteElecFieldDOFS(ElectrolyteElecFieldDof);
 
-	return 0;
+    reductants.UpdateExplicitDriftTerm(ElectrolyteElecFieldDof);
+    oxidants.UpdateExplicitDriftTerm(ElectrolyteElecFieldDof);
+
+    return 0;
 }
-	
+
 int
 ddpTimeStepping_type::
 BackwardEulerSolve(ddpCarrier_type & electrons,
-									ddpCarrier_type & holes,
-									ddpCarrier_type & reductants,
-									ddpCarrier_type & oxidants)
+                   ddpCarrier_type & holes,
+                   ddpCarrier_type & reductants,
+                   ddpCarrier_type & oxidants)
 {
-	electrons.BackwardEuler();
-	holes.BackwardEuler();
-	reductants.BackwardEuler();
-	oxidants.BackwardEuler();
+    electrons.BackwardEuler();
+    holes.BackwardEuler();
+    reductants.BackwardEuler();
+    oxidants.BackwardEuler();
 
-	return 0;
+    return 0;
 }
 
 int
 ddpTimeStepping_type::
 BackwardEulerSolve(ddpCarrier_type & carrier1,
-									 ddpCarrier_type & carrier2)
+                   ddpCarrier_type & carrier2)
 {
-	carrier1.BackwardEuler();
-	carrier2.BackwardEuler();
+    carrier1.BackwardEuler();
+    carrier2.BackwardEuler();
 
-	return 0;
+    return 0;
 }
 
 int
 ddpTimeStepping_type::
 IMIMEX_Solve(ddpCarrier_type & electrons,
-						ddpCarrier_type & holes,
-						ddpCarrier_type & reductants,
-						ddpCarrier_type & oxidants,
-						ddpPoisson_type & Poisson,
-						const ddpGrid_type & semiconductor_grid,
-						const ddpGrid_type & electrolyte_grid,
-						const ddpProblemInfo_type & problem,
-						const double & tCurrent,
-						const double & tDelta)
+             ddpCarrier_type & holes,
+             ddpCarrier_type & reductants,
+             ddpCarrier_type & oxidants,
+             ddpPoisson_type & Poisson,
+             const ddpGrid_type & semiconductor_grid,
+             const ddpGrid_type & electrolyte_grid,
+             const ddpProblemInfo_type & problem,
+             const double & tCurrent,
+             const double & tDelta)
 {
-	// Get the electric field values for the carriers
-	Poisson.getSemiconductorElecFieldDOFS(SemiconductorElecFieldDof);
-	Poisson.getElectrolyteElecFieldDOFS(ElectrolyteElecFieldDof); 
+    // Get the electric field values for the carriers
+    Poisson.getSemiconductorElecFieldDOFS(SemiconductorElecFieldDof);
+    Poisson.getElectrolyteElecFieldDOFS(ElectrolyteElecFieldDof);
 
-	// set the drift terms using explicit data
-	holes.UpdateImplicitDriftTerm(SemiconductorElecFieldDof,
-																problem,
-																semiconductor_grid);
-	electrons.UpdateImplicitDriftTerm(SemiconductorElecFieldDof,
-																		problem,
-																		semiconductor_grid);
-
-
-	//////////////////////////////////////////////////////////////////////////////
-	// Semiconductor Solve
-	//////////////////////////////////////////////////////////////////////////////
-	
-	// get interface density values
-	reductants_interface = reductants.getInterfaceDensity();
-	oxidants_interface = oxidants.getInterfaceDensity();
-			
-	double implicit_electron_value = k_et * oxidants_interface;// * electrons_interface;
-	double explicit_electron_value = -k_et * electrons_e * oxidants_interface;
-	double implicit_hole_value 		 = k_ht * reductants_interface;// * holes_interface;;
-	double explicit_hole_vlaue 		 = -k_ht * holes_e * reductants_interface;
-
-	// assemble matrices with implicit value
-	electrons.AssembleLDGSystem(problem,
-															semiconductor_grid,
-															implicit_electron_value,
-															tDelta);
-
-	holes.AssembleLDGSystem(problem,
-												  semiconductor_grid,
-													implicit_hole_value,
-												  tDelta);
-	
-	// set the Robin boundary conditions at this time step
-	// using explicit values
-	electrons.setRight_RobinValue(explicit_electron_value);
-	holes.setRight_RobinValue(explicit_hole_vlaue);
-
-	// Update recombination
-	grvy_timer_begin("Assemble Recombination Term");	
-	SRH_Recombination.updateRecombination(semiconductor_grid, electrons, holes);
-	grvy_timer_end("Assemble Recombination Term");	
-	
-	// Set RHS
-	electrons.AssembleRHS(tCurrent,
-												tDelta);
-	
-		
-	holes.AssembleRHS(tCurrent,
-										tDelta);
-	// solve and update
-	electrons.BackwardEuler();
-	holes.BackwardEuler();
+    // set the drift terms using explicit data
+    holes.UpdateImplicitDriftTerm(SemiconductorElecFieldDof,
+                                  problem,
+                                  semiconductor_grid);
+    electrons.UpdateImplicitDriftTerm(SemiconductorElecFieldDof,
+                                      problem,
+                                      semiconductor_grid);
 
 
-	//////////////////////////////////////////////////////////////////////////////
-	// Reductant Solve
-	//////////////////////////////////////////////////////////////////////////////
-	electrons_interface = electrons.getInterfaceDensity();
-	holes_interface 		= holes.getInterfaceDensity();
-	
-	// get interface density values
-	double implicit_reductant_value = k_ht * (holes_interface - holes_e);
-	double explicit_reductant_value = -k_et * (electrons_interface - electrons_e) 
-																					* oxidants_interface;
-	// update the drift term
-	reductants.UpdateImplicitDriftTerm(ElectrolyteElecFieldDof,
-																		 problem,
-																		 electrolyte_grid);
+    //////////////////////////////////////////////////////////////////////////////
+    // Semiconductor Solve
+    //////////////////////////////////////////////////////////////////////////////
 
-	// assemble matrices with implicit value
-	reductants.AssembleLDGSystem(problem,
-															electrolyte_grid,
-															implicit_reductant_value,
-															tDelta);
+    // get interface density values
+    reductants_interface = reductants.getInterfaceDensity();
+    oxidants_interface = oxidants.getInterfaceDensity();
 
-	// set the robin boundary condition using explicit values of rho_o, implicit rho_n
-	reductants.setLeft_RobinValue(explicit_reductant_value);
- 
-	// assmble rhs													
-	reductants.AssembleRHS(tCurrent,
-												tDelta);
-			
-	// solve and update
-	reductants.BackwardEuler();
+    double implicit_electron_value = k_et * oxidants_interface;// * electrons_interface;
+    double explicit_electron_value = -k_et * electrons_e * oxidants_interface;
+    double implicit_hole_value 		 = k_ht * reductants_interface;// * holes_interface;;
+    double explicit_hole_vlaue 		 = -k_ht * holes_e * reductants_interface;
 
-	//////////////////////////////////////////////////////////////////////////////
-	// Oxidant Solve
-	//////////////////////////////////////////////////////////////////////////////
+    // assemble matrices with implicit value
+    electrons.AssembleLDGSystem(problem,
+                                semiconductor_grid,
+                                implicit_electron_value,
+                                tDelta);
 
-	// get interface density values
-	reductants_interface = reductants.getInterfaceDensity();
+    holes.AssembleLDGSystem(problem,
+                            semiconductor_grid,
+                            implicit_hole_value,
+                            tDelta);
 
-	double implicit_oxidant_value = k_et * (electrons_interface - electrons_e);
-	double explicit_oxidant_value =	-k_ht * (holes_interface - holes_e) 
-																				* reductants_interface;
+    // set the Robin boundary conditions at this time step
+    // using explicit values
+    electrons.setRight_RobinValue(explicit_electron_value);
+    holes.setRight_RobinValue(explicit_hole_vlaue);
 
-	// update the drift term
-	oxidants.UpdateImplicitDriftTerm(ElectrolyteElecFieldDof,
-																	 problem,
-																	 electrolyte_grid);
+    // Update recombination
+ //   grvy_timer_begin("Assemble Recombination Term");
+    SRH_Recombination.updateRecombination(semiconductor_grid, electrons, holes);
+ //   grvy_timer_end("Assemble Recombination Term");
 
-	// assemble matrices with implicit value
-	oxidants.AssembleLDGSystem(problem,
-															electrolyte_grid,
-															implicit_oxidant_value,
-															tDelta);
-																			
-	// set the robin boundary condition using explicit values of rho_o, implicit rho_n
-	oxidants.setLeft_RobinValue(explicit_oxidant_value);
- 
+    // Set RHS
+    electrons.AssembleRHS(tCurrent,
+                          tDelta);
 
-	// assmble rhs													
-	oxidants.AssembleRHS(tCurrent,
-												tDelta);
-			
-	// solve and update
-	oxidants.BackwardEuler();
 
-	return 0;
+    holes.AssembleRHS(tCurrent,
+                      tDelta);
+    // solve and update
+    electrons.BackwardEuler();
+    holes.BackwardEuler();
+
+
+    //////////////////////////////////////////////////////////////////////////////
+    // Reductant Solve
+    //////////////////////////////////////////////////////////////////////////////
+    electrons_interface = electrons.getInterfaceDensity();
+    holes_interface 		= holes.getInterfaceDensity();
+
+    // get interface density values
+    double implicit_reductant_value = k_ht * (holes_interface - holes_e);
+    double explicit_reductant_value = -k_et * (electrons_interface - electrons_e)
+                                      * oxidants_interface;
+    // update the drift term
+    reductants.UpdateImplicitDriftTerm(ElectrolyteElecFieldDof,
+                                       problem,
+                                       electrolyte_grid);
+
+    // assemble matrices with implicit value
+    reductants.AssembleLDGSystem(problem,
+                                 electrolyte_grid,
+                                 implicit_reductant_value,
+                                 tDelta);
+
+    // set the robin boundary condition using explicit values of rho_o, implicit rho_n
+    reductants.setLeft_RobinValue(explicit_reductant_value);
+
+    // assmble rhs
+    reductants.AssembleRHS(tCurrent,
+                           tDelta);
+
+    // solve and update
+    reductants.BackwardEuler();
+
+    //////////////////////////////////////////////////////////////////////////////
+    // Oxidant Solve
+    //////////////////////////////////////////////////////////////////////////////
+
+    // get interface density values
+    reductants_interface = reductants.getInterfaceDensity();
+
+    double implicit_oxidant_value = k_et * (electrons_interface - electrons_e);
+    double explicit_oxidant_value =	-k_ht * (holes_interface - holes_e)
+                                    * reductants_interface;
+
+    // update the drift term
+    oxidants.UpdateImplicitDriftTerm(ElectrolyteElecFieldDof,
+                                     problem,
+                                     electrolyte_grid);
+
+    // assemble matrices with implicit value
+    oxidants.AssembleLDGSystem(problem,
+                               electrolyte_grid,
+                               implicit_oxidant_value,
+                               tDelta);
+
+    // set the robin boundary condition using explicit values of rho_o, implicit rho_n
+    oxidants.setLeft_RobinValue(explicit_oxidant_value);
+
+
+    // assmble rhs
+    oxidants.AssembleRHS(tCurrent,
+                         tDelta);
+
+    // solve and update
+    oxidants.BackwardEuler();
+
+    return 0;
 }
 
 
 int
 ddpTimeStepping_type::
 IMEXEX_Solve(ddpCarrier_type & electrons,
-						ddpCarrier_type & holes,
-						ddpCarrier_type & reductants,
-						ddpCarrier_type & oxidants,
-						ddpPoisson_type & Poisson,
-						const ddpGrid_type & semiconductor_grid,
-						const ddpGrid_type & electrolyte_grid,
-						const ddpProblemInfo_type & problem,
-						const double & tCurrent,
-						const double & tDelta)
+             ddpCarrier_type & holes,
+             ddpCarrier_type & reductants,
+             ddpCarrier_type & oxidants,
+             ddpPoisson_type & Poisson,
+             const ddpGrid_type & semiconductor_grid,
+             const ddpGrid_type & electrolyte_grid,
+             const ddpProblemInfo_type & problem,
+             const double & tCurrent,
+             const double & tDelta)
 
 {
-	// Get the electric field values for the carriers
-	Poisson.getSemiconductorElecFieldDOFS(SemiconductorElecFieldDof);
-	Poisson.getElectrolyteElecFieldDOFS(ElectrolyteElecFieldDof); 
+    // Get the electric field values for the carriers
+    Poisson.getSemiconductorElecFieldDOFS(SemiconductorElecFieldDof);
+    Poisson.getElectrolyteElecFieldDOFS(ElectrolyteElecFieldDof);
 
-	// set the drift terms using explicit data
-	holes.UpdateExplicitDriftTerm(SemiconductorElecFieldDof);
-	electrons.UpdateExplicitDriftTerm(SemiconductorElecFieldDof);
+    // set the drift terms using explicit data
+    holes.UpdateExplicitDriftTerm(SemiconductorElecFieldDof);
+    electrons.UpdateExplicitDriftTerm(SemiconductorElecFieldDof);
 
-	//////////////////////////////////////////////////////////////////////////////
-	// Semiconductor Solve
-	//////////////////////////////////////////////////////////////////////////////
-	
-	// get interface density values
-	reductants_interface = reductants.getInterfaceDensity();
-	oxidants_interface = oxidants.getInterfaceDensity();
-			
-	double implicit_electron_value = k_et * oxidants_interface;// * electrons_interface;
-	double explicit_electron_value = -k_et * electrons_e * oxidants_interface;
-	double implicit_hole_value 		 = k_ht * reductants_interface;// * holes_interface;;
-	double explicit_hole_vlaue 		 = -k_ht * holes_e * reductants_interface;
+    //////////////////////////////////////////////////////////////////////////////
+    // Semiconductor Solve
+    //////////////////////////////////////////////////////////////////////////////
 
-	// assemble matrices with implicit value
-	electrons.AssembleLDGSystem(problem,
-															semiconductor_grid,
-															implicit_electron_value,
-															tDelta);
+    // get interface density values
+    reductants_interface = reductants.getInterfaceDensity();
+    oxidants_interface = oxidants.getInterfaceDensity();
 
-	holes.AssembleLDGSystem(problem,
-												  semiconductor_grid,
-													implicit_hole_value,
-												  tDelta);
-	
-	// set the Robin boundary conditions at this time step
-	// using explicit values
-	electrons.setRight_RobinValue(explicit_electron_value);
-	holes.setRight_RobinValue(explicit_hole_vlaue);
+    double implicit_electron_value = k_et * oxidants_interface;// * electrons_interface;
+    double explicit_electron_value = -k_et * electrons_e * oxidants_interface;
+    double implicit_hole_value 		 = k_ht * reductants_interface;// * holes_interface;;
+    double explicit_hole_vlaue 		 = -k_ht * holes_e * reductants_interface;
 
-	// Update recombination
-	grvy_timer_begin("Assemble Recombination Term");	
-	SRH_Recombination.updateRecombination(semiconductor_grid, electrons, holes);
-	grvy_timer_end("Assemble Recombination Term");	
-	
-	// Set RHS
-	electrons.AssembleRHS(tCurrent,
-												tDelta);
-	
-		
-	holes.AssembleRHS(tCurrent,
-										tDelta);
+    // assemble matrices with implicit value
+    electrons.AssembleLDGSystem(problem,
+                                semiconductor_grid,
+                                implicit_electron_value,
+                                tDelta);
 
-	// solve and update
-	electrons.BackwardEuler();
-	holes.BackwardEuler();
+    holes.AssembleLDGSystem(problem,
+                            semiconductor_grid,
+                            implicit_hole_value,
+                            tDelta);
+
+    // set the Robin boundary conditions at this time step
+    // using explicit values
+    electrons.setRight_RobinValue(explicit_electron_value);
+    holes.setRight_RobinValue(explicit_hole_vlaue);
+
+    // Update recombination
+  //  grvy_timer_begin("Assemble Recombination Term");
+    SRH_Recombination.updateRecombination(semiconductor_grid, electrons, holes);
+  //  grvy_timer_end("Assemble Recombination Term");
+
+    // Set RHS
+    electrons.AssembleRHS(tCurrent,
+                          tDelta);
 
 
-	//////////////////////////////////////////////////////////////////////////////
-	// Reductant Solve
-	//////////////////////////////////////////////////////////////////////////////
-	electrons_interface = electrons.getInterfaceDensity();
-	holes_interface 		= holes.getInterfaceDensity();
-	
-	// get interface density values
-	double implicit_reductant_value = k_ht * (holes_interface - holes_e);
-	double explicit_reductant_value = -k_et * (electrons_interface - electrons_e) 
-																					* oxidants_interface;
+    holes.AssembleRHS(tCurrent,
+                      tDelta);
 
-	// assemble matrices with implicit value
-	reductants.AssembleLDGSystem(problem,
-															electrolyte_grid,
-															implicit_reductant_value,
-															tDelta);
+    // solve and update
+    electrons.BackwardEuler();
+    holes.BackwardEuler();
 
-	// set the robin boundary condition using explicit values of rho_o, implicit rho_n
-	reductants.setLeft_RobinValue(explicit_reductant_value);
- 
-	// update the drift term
+
+    //////////////////////////////////////////////////////////////////////////////
+    // Reductant Solve
+    //////////////////////////////////////////////////////////////////////////////
+    electrons_interface = electrons.getInterfaceDensity();
+    holes_interface 		= holes.getInterfaceDensity();
+
+    // get interface density values
+    double implicit_reductant_value = k_ht * (holes_interface - holes_e);
+    double explicit_reductant_value = -k_et * (electrons_interface - electrons_e)
+                                      * oxidants_interface;
+
+    // assemble matrices with implicit value
+    reductants.AssembleLDGSystem(problem,
+                                 electrolyte_grid,
+                                 implicit_reductant_value,
+                                 tDelta);
+
+    // set the robin boundary condition using explicit values of rho_o, implicit rho_n
+    reductants.setLeft_RobinValue(explicit_reductant_value);
+
+    // update the drift term
 //	reductants.UpdateExplicitDriftTerm(ElectrolyteElecFieldDof);
 
-	// assmble rhs													
-	reductants.AssembleRHS(tCurrent,
-												tDelta);
-			
-	// solve and update
-	reductants.BackwardEuler();
+    // assmble rhs
+    reductants.AssembleRHS(tCurrent,
+                           tDelta);
 
-	//////////////////////////////////////////////////////////////////////////////
-	// Oxidant Solve
-	//////////////////////////////////////////////////////////////////////////////
+    // solve and update
+    reductants.BackwardEuler();
 
-	// get interface density values
-	reductants_interface = reductants.getInterfaceDensity();
+    //////////////////////////////////////////////////////////////////////////////
+    // Oxidant Solve
+    //////////////////////////////////////////////////////////////////////////////
 
-	double implicit_oxidant_value = k_et * (electrons_interface - electrons_e);
-	double explicit_oxidant_value =	-k_ht * (holes_interface - holes_e) 
-																				* reductants_interface;
+    // get interface density values
+    reductants_interface = reductants.getInterfaceDensity();
 
-	// assemble matrices with implicit value
-	oxidants.AssembleLDGSystem(problem,
-															electrolyte_grid,
-															implicit_oxidant_value,
-															tDelta);
-																			
-	// set the robin boundary condition using explicit values of rho_o, implicit rho_n
-	oxidants.setLeft_RobinValue(explicit_oxidant_value);
- 
-	// update the drift term
+    double implicit_oxidant_value = k_et * (electrons_interface - electrons_e);
+    double explicit_oxidant_value =	-k_ht * (holes_interface - holes_e)
+                                    * reductants_interface;
+
+    // assemble matrices with implicit value
+    oxidants.AssembleLDGSystem(problem,
+                               electrolyte_grid,
+                               implicit_oxidant_value,
+                               tDelta);
+
+    // set the robin boundary condition using explicit values of rho_o, implicit rho_n
+    oxidants.setLeft_RobinValue(explicit_oxidant_value);
+
+    // update the drift term
 //	oxidants.UpdateExplicitDriftTerm(ElectrolyteElecFieldDof);
 
-	// assmble rhs													
-	oxidants.AssembleRHS(tCurrent,
-												tDelta);
-			
-	// solve and update
-	oxidants.BackwardEuler();
+    // assmble rhs
+    oxidants.AssembleRHS(tCurrent,
+                         tDelta);
 
-	return 0;
+    // solve and update
+    oxidants.BackwardEuler();
+
+    return 0;
 }
 
 bool
 ddpTimeStepping_type::
 check_converged(ddpCarrier_type & electrons,
-								ddpCarrier_type & holes,
-								const double & tol)
+                ddpCarrier_type & holes,
+                const double & tol)
 {
-	electron_q_values =  electrons.VandeMondeMatrices.globalVandeMondeDG *
-											 electrons.carrierState.qDof;
+    electron_q_values =  electrons.VandeMondeMatrices.globalVandeMondeDG *
+                         electrons.carrierState.qDof;
 
-	hole_q_values = holes.VandeMondeMatrices.globalVandeMondeDG *
-						 		  holes.carrierState.qDof;
+    hole_q_values = holes.VandeMondeMatrices.globalVandeMondeDG *
+                    holes.carrierState.qDof;
 
-	q_values = electron_q_values - hole_q_values;
+    q_values = electron_q_values - hole_q_values;
 
-	double current_value = q_values(0);
+    double current_value = q_values(0);
 
-	for(int i = 1; i < q_values.size(); i++)	
-	{
-		if( fabs(current_value - q_values(i)) > tol)
-			return false;	
-	}
+    for(int i = 1; i < q_values.size(); i++)
+    {
+        if( fabs(current_value - q_values(i)) > tol)
+            return false;
+    }
 
-	// now its true	
-	left_value = current_value;
-	return true;
+    // now its true
+    left_value = current_value;
+    return true;
 }

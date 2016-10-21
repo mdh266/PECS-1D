@@ -7,42 +7,42 @@
 #include "Utilities.hpp"
 
 
-int 
+int
 ddpMakeCarrierProperies(
-			ddpProblemInfo_type const & problem,
-			ddpGrid_type const & grid,
-			ddpSparseVector_type const & weightsSparse,
-			ddpBijection_type const & Bijections,
-			ddpVandeMondeMatrices_type const & VandeMondeMatrices,
-			ddpDGFluxMatrices_type const & DGFluxMatrices,
-			ddpCarrierProperties_type & CarrierProps);
-int 
+    ddpProblemInfo_type const & problem,
+    ddpGrid_type const & grid,
+    ddpSparseVector_type const & weightsSparse,
+    ddpBijection_type const & Bijections,
+    ddpVandeMondeMatrices_type const & VandeMondeMatrices,
+    ddpDGFluxMatrices_type const & DGFluxMatrices,
+    ddpCarrierProperties_type & CarrierProps);
+int
 ddpMakeDiffusiveFluxProperties(
-		     ddpProblemInfo_type const & problem,
-		     ddpGrid_type const & grid,
-		     ddpSparseVector_type const & weightsSparse,
-		     ddpBijection_type const & Bijections,
-		     ddpVandeMondeMatrices_type const & VandeMondeMatrices,
-		     ddpDGFluxMatrices_type const & DGFluxMatrices,
-		     ddpCarrierProperties_type & CarrierProps);
+    ddpProblemInfo_type const & problem,
+    ddpGrid_type const & grid,
+    ddpSparseVector_type const & weightsSparse,
+    ddpBijection_type const & Bijections,
+    ddpVandeMondeMatrices_type const & VandeMondeMatrices,
+    ddpDGFluxMatrices_type const & DGFluxMatrices,
+    ddpCarrierProperties_type & CarrierProps);
 
-int 
+int
 ddpMakePoissonProperties( ddpProblemInfo_type const & problem,
-			  ddpGrid_type const & grid,
-			  ddpSparseVector_type const & weightsSparse,
-			  ddpBijection_type const & Bijections,
-			  ddpVandeMondeMatrices_type const & VandeMondeMatrices,
-			  ddpDGFluxMatrices_type const & DGFluxMatrices,
-			  ddpPoissonProperties_type & PoissonProperties);
+                          ddpGrid_type const & grid,
+                          ddpSparseVector_type const & weightsSparse,
+                          ddpBijection_type const & Bijections,
+                          ddpVandeMondeMatrices_type const & VandeMondeMatrices,
+                          ddpDGFluxMatrices_type const & DGFluxMatrices,
+                          ddpPoissonProperties_type & PoissonProperties);
 
-int 
+int
 ddpMakePoissonPropertiesWithInterface(ddpProblemInfo_type const & problem,
-									 	ddpGrid_type const & grid,
-									 	ddpSparseVector_type & weightsSparse,
-										ddpBijection_type const & Bijections,
-										ddpVandeMondeMatrices_type const & VandeMondeMatrices,
-										ddpDGFluxMatrices_type const & DGFluxMatrices,
-									 	ddpPoissonProperties_type & PoissonProperties);
+                                      ddpGrid_type const & grid,
+                                      ddpSparseVector_type & weightsSparse,
+                                      ddpBijection_type const & Bijections,
+                                      ddpVandeMondeMatrices_type const & VandeMondeMatrices,
+                                      ddpDGFluxMatrices_type const & DGFluxMatrices,
+                                      ddpPoissonProperties_type & PoissonProperties);
 
 
 #endif

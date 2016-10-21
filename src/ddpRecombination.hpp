@@ -5,29 +5,29 @@
 
 typedef class ddpRecombination_type
 {
-	private:
-		int size;
+private:
+    int size;
 
-		double IntrinsicDensity;
-		double RecombinationTime1;
-		double RecombinationTime2;
+    double IntrinsicDensity;
+    double RecombinationTime1;
+    double RecombinationTime2;
 
-		ddpBijFlag_type BijFlag;
+    ddpBijFlag_type BijFlag;
 
-		ddpDenseVector_type RecombinationPTVals;
-		ddpDenseVector_type	Carrier1PTVals;
-		ddpDenseVector_type	Carrier2PTVals;
+    ddpDenseVector_type RecombinationPTVals;
+    ddpDenseVector_type	Carrier1PTVals;
+    ddpDenseVector_type	Carrier2PTVals;
 
-	public:
-		ddpRecombination_type(ddpCarrier_type & carrier1,
-													ddpCarrier_type & carrier2);
-		
-		~ddpRecombination_type();
+public:
+    ddpRecombination_type(ddpCarrier_type & carrier1,
+                          ddpCarrier_type & carrier2);
+
+    ~ddpRecombination_type();
 
 
-		int updateRecombination(ddpGrid_type const & grid,												
-														ddpCarrier_type & carrier1, 
-														ddpCarrier_type & carrier2);
+    int updateRecombination(ddpGrid_type const & grid,
+                            ddpCarrier_type & carrier1,
+                            ddpCarrier_type & carrier2);
 
 } ddpRecombination_type;
 #endif

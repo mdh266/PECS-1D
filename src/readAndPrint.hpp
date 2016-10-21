@@ -9,11 +9,11 @@
 
 int
 readInput(ddpDomain_type & domain, ddpGrid_type & grid,
-	  ddpProblemInfo_type & problem,
-	  ddpCarrierConstants_type & carrierConstants,
-	  char const * nameOfFile);
+          ddpProblemInfo_type & problem,
+          ddpCarrierConstants_type & carrierConstants,
+          char const * nameOfFile);
 
-int 
+int
 ddpPrintGrid(ddpGrid_type const & grid);
 
 int ddpPrintTimeStamps(std::vector< double > const & timeStamps);

@@ -17,167 +17,167 @@
 
 
 typedef struct ddpTest_type
-{	
+{
 
-	ddpPoisson_type testPoisson;
-	ddpDopingProfile_type DopingProfile;
-	
-	// for testing Poisson
-	ddpPoisson_type truePoisson;
-	ddpCarrier_type testCarrier1;
-	ddpCarrier_type testCarrier2;
+    ddpPoisson_type testPoisson;
+    ddpDopingProfile_type DopingProfile;
 
-
-	double (* Carrier1ICFunction) (const double & x);
-	double (* Carrier2ICFunction) (const double & x);
+    // for testing Poisson
+    ddpPoisson_type truePoisson;
+    ddpCarrier_type testCarrier1;
+    ddpCarrier_type testCarrier2;
 
 
-	
-	double (* TrueSolutionPotential) (const double & x);
-	double (* TrueSolutionElecField) (const double & x);
-
-	double (* DopingProfileFunction1) (const double & x);
-	double (* DopingProfileFunction2) (const double & x);
-
-	double (* TrueDopingProfileFunction) (const double & x);
-
-
-	ddpDenseVector_type TrueDopingDof;
-
-	// for testing carriers
-	ddpCarrier_type testCarrier;
-	ddpCarrier_type trueCarrier;
-
-
-	double (* TrueSolutionU) (const double & x);
-	double (* TrueSolutionQ) (const double & x);
-
-		
-	// Carrier Initial And Boundary Conditions	
-	double (* CarrierICFunction) (const double & x);
-	
-	ddpBCType_type CarrierLeftBCType;
-	ddpBCType_type CarrierRightBCType;	
-	
-	ddpBCType_type Carrier1LeftBCType;
-	ddpBCType_type Carrier1RightBCType;	
-
-	ddpBCType_type Carrier2LeftBCType;
-	ddpBCType_type Carrier2RightBCType;	
-
-	double (* CarrierLeftBCFunction) (const double & x);
-	double (* CarrierRightBCFunction) (const double & x);
-	
-	double (* Carrier1LeftBCFunction) (const double & x);
-	double (* Carrier1RightBCFunction) (const double & x);
-	
-	double (* Carrier2LeftBCFunction) (const double & x);
-	double (* Carrier2RightBCFunction) (const double & x);
-	
-	// Potential BC Functions
-	
-	double (* PotentialLeftBCFunction) (const double & x);
-	double (* PotentialRightBCFunction) (const double & x);
-
-	double (* DopingProfileFunction) (const double & x);
+    double (* Carrier1ICFunction) (const double & x);
+    double (* Carrier2ICFunction) (const double & x);
 
 
 
-	ddpGrid_type testgrid;
-	ddpGrid_type testgrid2;
-	ddpProblemInfo_type testproblem;
+    double (* TrueSolutionPotential) (const double & x);
+    double (* TrueSolutionElecField) (const double & x);
+
+    double (* DopingProfileFunction1) (const double & x);
+    double (* DopingProfileFunction2) (const double & x);
+
+    double (* TrueDopingProfileFunction) (const double & x);
 
 
-	// Things to use to project funtion onto a basis
- 	ddpBijForw_type DGForward; 
-  ddpBijForw_type MXForward;
+    ddpDenseVector_type TrueDopingDof;
 
-  ddpSparseMatrix_type globalVandeMondeDG;  
-	ddpSparseMatrix_type globalVandeMondeMX;
+    // for testing carriers
+    ddpCarrier_type testCarrier;
+    ddpCarrier_type trueCarrier;
 
-  ddpBijForw_type PTForward;
 
-  ddpSparseVector_type sparseWeights;
+    double (* TrueSolutionU) (const double & x);
+    double (* TrueSolutionQ) (const double & x);
 
-  ddpSparseMatrix_type MassU; 
-	ddpSparseMatrix_type A00; 
 
-  ddpBijFlag_type BIJFlagDG; 
-	ddpBijFlag_type BIJFlagMX;
+    // Carrier Initial And Boundary Conditions
+    double (* CarrierICFunction) (const double & x);
 
-	ddpDenseVector_type EPTS;
-	ddpDenseVector_type ElecFieldDof;
+    ddpBCType_type CarrierLeftBCType;
+    ddpBCType_type CarrierRightBCType;
 
-	ddpDenseVector_type EpsilonPTValues; 
-	ddpDenseVector_type EpsilonInvPTValues; 
+    ddpBCType_type Carrier1LeftBCType;
+    ddpBCType_type Carrier1RightBCType;
+
+    ddpBCType_type Carrier2LeftBCType;
+    ddpBCType_type Carrier2RightBCType;
+
+    double (* CarrierLeftBCFunction) (const double & x);
+    double (* CarrierRightBCFunction) (const double & x);
+
+    double (* Carrier1LeftBCFunction) (const double & x);
+    double (* Carrier1RightBCFunction) (const double & x);
+
+    double (* Carrier2LeftBCFunction) (const double & x);
+    double (* Carrier2RightBCFunction) (const double & x);
+
+    // Potential BC Functions
+
+    double (* PotentialLeftBCFunction) (const double & x);
+    double (* PotentialRightBCFunction) (const double & x);
+
+    double (* DopingProfileFunction) (const double & x);
+
+
+
+    ddpGrid_type testgrid;
+    ddpGrid_type testgrid2;
+    ddpProblemInfo_type testproblem;
+
+
+    // Things to use to project funtion onto a basis
+    ddpBijForw_type DGForward;
+    ddpBijForw_type MXForward;
+
+    ddpSparseMatrix_type globalVandeMondeDG;
+    ddpSparseMatrix_type globalVandeMondeMX;
+
+    ddpBijForw_type PTForward;
+
+    ddpSparseVector_type sparseWeights;
+
+    ddpSparseMatrix_type MassU;
+    ddpSparseMatrix_type A00;
+
+    ddpBijFlag_type BIJFlagDG;
+    ddpBijFlag_type BIJFlagMX;
+
+    ddpDenseVector_type EPTS;
+    ddpDenseVector_type ElecFieldDof;
+
+    ddpDenseVector_type EpsilonPTValues;
+    ddpDenseVector_type EpsilonInvPTValues;
 
 //////////////////////////////////////////////////////////////////////////
 // Setting / Running Tests
 /////////////////////////////////////////////////////////////////////////
 
 
-	int initializeTest(const ddpTestChargeCarrier_type & carrierType,
- 									   const ddpGrid_type & inputgrid,
-			  						 const ddpProblemInfo_type & inputproblem,
-									   const ddpCarrierConstants_type & testConstants);
+    int initializeTest(const ddpTestChargeCarrier_type & carrierType,
+                       const ddpGrid_type & inputgrid,
+                       const ddpProblemInfo_type & inputproblem,
+                       const ddpCarrierConstants_type & testConstants);
 
-	int ReinitializeTestWithScaling(const ddpTestChargeCarrier_type & carrierType,
-			 	      						 const ddpGrid_type & inputgrid,
-   	    								   const ddpProblemInfo_type & inputproblem,
-  	  	   							  const ddpCarrierConstants_type & testConstants);
-	
-	// for poisson
-	int ReinitializeTestWithInterface(const ddpGrid_type & left_grid,
-																 		const ddpGrid_type & right_grid,
-   	      													const ddpProblemInfo_type & inputproblem,
-  	       													const ddpCarrierConstants_type & testConstants);
+    int ReinitializeTestWithScaling(const ddpTestChargeCarrier_type & carrierType,
+                                    const ddpGrid_type & inputgrid,
+                                    const ddpProblemInfo_type & inputproblem,
+                                    const ddpCarrierConstants_type & testConstants);
 
-	// for carriers
-	int initializeReactiveFluxTest(const ddpGrid_type & left_grid,
-																 const ddpGrid_type & right_grid,
-																 const ddpProblemInfo_type & inputproblem,
-																 const ddpCarrierConstants_type & testConstants);
+    // for poisson
+    int ReinitializeTestWithInterface(const ddpGrid_type & left_grid,
+                                      const ddpGrid_type & right_grid,
+                                      const ddpProblemInfo_type & inputproblem,
+                                      const ddpCarrierConstants_type & testConstants);
 
-	int setTestDoping();
+    // for carriers
+    int initializeReactiveFluxTest(const ddpGrid_type & left_grid,
+                                   const ddpGrid_type & right_grid,
+                                   const ddpProblemInfo_type & inputproblem,
+                                   const ddpCarrierConstants_type & testConstants);
 
-	bool runTestDoping();
+    int setTestDoping();
 
-	int setTestPoisson();
+    bool runTestDoping();
 
-	int setImplicitTestCarrier();
+    int setTestPoisson();
 
-	int setSteadyStateTestCarrier();
+    int setImplicitTestCarrier();
 
-	int setTestReactiveFluxes();
-		
-	bool runTestPoisson();
+    int setSteadyStateTestCarrier();
 
-	void runTestPoissonL2Error(ddpDenseVector_type & errors);
+    int setTestReactiveFluxes();
 
-  bool runTestPoissonWithInterface();
+    bool runTestPoisson();
 
-	bool runImplicitTestCarrier();
-	
-	bool runImplicitTestCarrierWithScaling();
+    void runTestPoissonL2Error(ddpDenseVector_type & errors);
 
-	bool runSteadyStateTestCarrier();
+    bool runTestPoissonWithInterface();
 
-	bool runSteadyStateShurTestCarrier();
-	
-	void runTestCarrierL2Error(ddpDenseVector_type & errors);
+    bool runImplicitTestCarrier();
 
-	void runImplicitTestCarrierL2Error(ddpDenseVector_type & errors);
+    bool runImplicitTestCarrierWithScaling();
 
-	bool runImplicitTestReactiveFluxes();
-	
-	bool runImplicitExplicitTestReactiveFluxes();
+    bool runSteadyStateTestCarrier();
 
-	int outputTestCarrier(int testNumber);
-	
-	int outputTestPoisson(int testNumber);
+    bool runSteadyStateShurTestCarrier();
 
-	int	outputTestPoissonWithInterface(int testNumber);
-	
+    void runTestCarrierL2Error(ddpDenseVector_type & errors);
+
+    void runImplicitTestCarrierL2Error(ddpDenseVector_type & errors);
+
+    bool runImplicitTestReactiveFluxes();
+
+    bool runImplicitExplicitTestReactiveFluxes();
+
+    int outputTestCarrier(int testNumber);
+
+    int outputTestPoisson(int testNumber);
+
+    int	outputTestPoissonWithInterface(int testNumber);
+
 } ddpTest_type;
 
 

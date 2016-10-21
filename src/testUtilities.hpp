@@ -1,6 +1,6 @@
 #ifndef _TESTUTILITIES_H_
 #define _TESTUTILITIES_H_
- 
+
 #include "includes.hpp"
 #include "main.hpp"
 #include "carrier.hpp"
@@ -68,7 +68,7 @@ double DD_L2_BC(double const & x);
 double Poisson_L2_RHS(double const & x);
 
 double Poisson_L2_Potential(double const & x);
-	
+
 double  Poisson_L2_ElecField(double const & x);
 
 double Doping_N_A(double const & x);
@@ -79,32 +79,32 @@ double Doping_PN(double const & x);
 
 double True_N_A(double const & x);
 
-bool Are_Same(ddpCarrier_type const & carrier1, 
-	      ddpCarrier_type const & carrier2);
+bool Are_Same(ddpCarrier_type const & carrier1,
+              ddpCarrier_type const & carrier2);
 
-bool Are_Same_Current(ddpCarrier_type const & carrier1, 
-								      ddpCarrier_type const & carrier2);
+bool Are_Same_Current(ddpCarrier_type const & carrier1,
+                      ddpCarrier_type const & carrier2);
 
 bool Dofs_Are_Same(ddpPoisson_type const & P1, ddpPoisson_type const & P2);
 
 bool Are_Same(ddpDenseVector_type const & DP1, ddpDenseVector_type const & DP2);
 
-int L2_Error(ddpPoisson_type const & P1, 
-						double (*TrueU)(const double & x),
-						 double (*TrueQ)(const double & x),
-						 ddpDenseVector_type & errors);
+int L2_Error(ddpPoisson_type const & P1,
+             double (*TrueU)(const double & x),
+             double (*TrueQ)(const double & x),
+             ddpDenseVector_type & errors);
 
 
-int L2_Error(ddpCarrier_type const & TestP, 
-						 double (*TrueU)(const double & x),
-						 double (*TrueQ)(const double & x),
-						 ddpDenseVector_type & errors);
+int L2_Error(ddpCarrier_type const & TestP,
+             double (*TrueU)(const double & x),
+             double (*TrueQ)(const double & x),
+             ddpDenseVector_type & errors);
 
 
 int print2File(ddpCarrier_type const & testCarrier,
-	       ddpCarrier_type const & trueCarrier, 
-	       ddpPoisson_type const & testPoisson,
-	       int testNum);
+               ddpCarrier_type const & trueCarrier,
+               ddpPoisson_type const & testPoisson,
+               int testNum);
 
 ///////////////////////////////////////////////////////////////////////////////
 // Diffusion Problem Functions
