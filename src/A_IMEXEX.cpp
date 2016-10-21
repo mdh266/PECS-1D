@@ -10,27 +10,27 @@
 // that the displacement electric field be continuous across the interface.
 ///////////////////////////////////////////////////////////////////////////
 
-#include "includes.hpp"
-#include "main.hpp"
-#include "carrier.hpp"
-#include "poisson.hpp"
-#include "dopingprofile.hpp"
-#include "ddpPrintState.hpp"
-#include "ddpComputeDeltaT.hpp"
-#include "ddpTimeStepping.hpp"
+#include "../includes/includes.hpp"
+#include "../includes/main.hpp"
+#include "../includes/carrier.hpp"
+#include "../includes/poisson.hpp"
+#include "../includes/dopingprofile.hpp"
+#include "../includes/ddpPrintState.hpp"
+#include "../includes/ddpComputeDeltaT.hpp"
+#include "../includes/ddpTimeStepping.hpp"
 
 int
 main()
 {
-    grvy_timer_init("GRVY TIMING");
-    grvy_timer_reset();
-    grvy_timer_begin("Main");
+//    grvy_timer_init("GRVY TIMING");
+//    grvy_timer_reset();
+//    grvy_timer_begin("Main");
 
 /////////////////////////////////////////////////////////////////////////
 // Set Up
 /////////////////////////////////////////////////////////////////////////
 
-    grvy_timer_begin("Boiler Plate");
+ //   grvy_timer_begin("Boiler Plate");
 
     // Read in inputs about domain, grid and problem.
     ddpDomain_type total_domain, semiconductor_domain, electrolyte_domain;
@@ -209,7 +209,7 @@ main()
                                     electrolyte_grid,
                                     tDelta);
 
-    grvy_timer_end("Boiler Plate");
+   // grvy_timer_end("Boiler Plate");
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -267,7 +267,7 @@ main()
 
             tCurrent += tDelta;
         }
-        grvy_timer_begin("Print State");
+     //   grvy_timer_begin("Print State");
 
         //////////////////////////////////////////////////////////////////////
         // printing the state
@@ -281,7 +281,7 @@ main()
                       timeStampLabel,
                       tCurrent);
 
-        grvy_timer_end("Print State");
+      ///  grvy_timer_end("Print State");
 
     } // for  end time stepping
 
@@ -297,9 +297,9 @@ main()
     /////////////////////////////////////////////////////////////////////////
     // Print the run time performance results
     //////////////////////////////////////////////////////////////////////////
-    grvy_timer_end("Main");
-    grvy_timer_finalize();
-    grvy_timer_summarize();
+//    grvy_timer_end("Main");
+//    grvy_timer_finalize();
+//    grvy_timer_summarize();
 
     return 0;
 }

@@ -34,11 +34,14 @@ IF(OPENMP_FOUND)
 ENDIF()
 
 
+SET(HEADERS "include")
+
 # set the include directories
 SET(INCLUDE_DIRS
 	${Boost_INCLUDE_DIRS}
 	${GSL_INCLUDE_DIR}
 	${EIGEN_DIR}
+	${HEADERS}
 	)
 
 # set the libraries to link to
@@ -61,7 +64,7 @@ SET(PROJECT_SRCS
 	 ./src/vectorSetUp.cpp
 	 ./src/makeProperties.cpp
 	 ./src/testUtilities.cpp
-	 ./src/carrier.cpp
+	./src/carrier.cpp
 	 ./src/poisson.cpp
 	 ./src/dopingprofile.cpp
 	 ./src/test.cpp

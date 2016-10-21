@@ -1,4 +1,4 @@
-#include "poisson.hpp"
+#include "../include/poisson.hpp"
 
 // May need to refer to documentation to see the defintion of
 // some the matrices and vectors

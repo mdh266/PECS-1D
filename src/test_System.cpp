@@ -1,4 +1,4 @@
-#include "test.hpp"
+#include "../include/test.hpp"
 
 
 int ddpTestingMakeInputFile(void);

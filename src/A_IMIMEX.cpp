@@ -10,14 +10,14 @@
 // that the displacement electric field be continuous across the interface.
 ///////////////////////////////////////////////////////////////////////////
 
-#include "includes.hpp"
-#include "main.hpp"
-#include "carrier.hpp"
-#include "poisson.hpp"
-#include "dopingprofile.hpp"
-#include "ddpPrintState.hpp"
-#include "ddpComputeDeltaT.hpp"
-#include "ddpTimeStepping.hpp"
+#include "../include/includes.hpp"
+#include "../include/main.hpp"
+#include "../include/carrier.hpp"
+#include "../include/poisson.hpp"
+#include "../include/dopingprofile.hpp"
+#include "../include/ddpPrintState.hpp"
+#include "../include/ddpComputeDeltaT.hpp"
+#include "../include/ddpTimeStepping.hpp"
 
 int
 main()

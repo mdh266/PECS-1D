@@ -29,7 +29,6 @@ same as INSTALL steps 1-3
 4.) make test_System
 5.) ./test_System
 
-NOTE: With Clang++ some of these fail?  Mostly poisson I donno why
 
 ####################################################################
 # USING 

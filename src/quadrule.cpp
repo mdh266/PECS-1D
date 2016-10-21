@@ -7,7 +7,7 @@
 
 using namespace std;
 
-# include "quadrule.hpp"
+# include "../include/quadrule.hpp"
 
 //****************************************************************************80
 

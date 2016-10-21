@@ -6,13 +6,13 @@
  *
  */
 
-#include "main.hpp"
-#include "ddpPrintState.hpp"
-#include "ddpComputeDeltaT.hpp"
-#include "carrier.hpp"
-#include "poisson.hpp"
-#include "dopingprofile.hpp"
-#include "testUtilities.hpp"
+#include "../include/main.hpp"
+#include "../include/ddpPrintState.hpp"
+#include "../include/ddpComputeDeltaT.hpp"
+#include "../include/carrier.hpp"
+#include "../include/poisson.hpp"
+#include "../include/dopingprofile.hpp"
+#include "../include/testUtilities.hpp"
 
 
 int

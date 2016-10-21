@@ -1,4 +1,4 @@
-#include "ddpRecombination.hpp"
+#include "../include/ddpRecombination.hpp"
 
 ddpRecombination_type::
 ddpRecombination_type(ddpCarrier_type & carrier1,

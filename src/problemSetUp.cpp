@@ -1,6 +1,6 @@
-#include "includes.hpp"
-#include "basis.hpp"
-#include "main.hpp"
+#include "../include/includes.hpp"
+#include "../include/basis.hpp"
+#include "../include/main.hpp"
 #include <iomanip>
 
 

@@ -1,4 +1,4 @@
-#include "VandeMondeSetUp.hpp"
+#include "../include/VandeMondeSetUp.hpp"
 
 
 int

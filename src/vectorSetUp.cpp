@@ -1,4 +1,4 @@
-#include "vectorSetUp.hpp"
+#include "../include/vectorSetUp.hpp"
 
 
 // NOTE: Not really a point in having a general flux vector

@@ -17,7 +17,7 @@
 #include "dopingprofile.hpp"
 #include "ddpPrintState.hpp"
 #include "ddpComputeDeltaT.hpp"
-#include "ddpTimeStepping.hpp"
+#include "../include/ddpTimeStepping.hpp"
 
 int
 main()

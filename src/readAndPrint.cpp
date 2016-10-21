@@ -1,4 +1,4 @@
-#include "readAndPrint.hpp"
+#include "../include/readAndPrint.hpp"
 
 int
 readInput(ddpDomain_type & domain, ddpGrid_type & grid,

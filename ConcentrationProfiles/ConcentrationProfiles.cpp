@@ -1,4 +1,4 @@
-#include "../src/SimulationConditions.hpp"
+#include "../include/SimulationConditions.hpp"
 
 /////////////////////////////////////////////////////////////////////////
 // Devices!  These are their doping profiles and 

@@ -1,4 +1,4 @@
-#include "matrixSetUp.hpp"
+#include "../include/matrixSetUp.hpp"
 
 int
 ddpMakeGeneralMatrix(ddpProblemInfo_type const & problem,
