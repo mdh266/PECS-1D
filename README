@@ -4,7 +4,7 @@ method for the Poisson equation and local discontinuous Galerkin method
 along with implicit-explicit time stepping method for the drift-diffusion
 equations. For more information see the documentation for this code.  Documenation
 for the two vesion
-<a href="http://michael-harmon.com/PECS/>here</a> gives further background on the
+<a href="http://michael-harmon.com/PECS/">here</a> gives further background on the
 methods and model.
 
 
