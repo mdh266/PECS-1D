@@ -2,7 +2,10 @@ Solves the coupled drift-diffusion-Poisson that describe used to model
 a photoelectrochemical solar cell in 1D.  We use a mixed finite element
 method for the Poisson equation and local discontinuous Galerkin method
 along with implicit-explicit time stepping method for the drift-diffusion
-equations.  See the documentation for more information.
+equations. For more information see the documentation for this code.  Documenation
+for the two vesion
+<a href="http://michael-harmon.com/PECS/>here</a> gives further background on the
+methods and model.
 
 
 Dependencies:
