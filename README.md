@@ -41,7 +41,7 @@ After installing all the dependencies for this code, go into the <code>PECS-1D/<
 
 	mkdir build
 	cd build 
-	cmake  -DCMAKE_BUILD_TYPE=RELEASE ..
+	cmake  ..
 	make solar_cell_app
 	mv solar_cell_app ../run
 
